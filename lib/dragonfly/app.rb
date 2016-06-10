@@ -106,6 +106,7 @@ module Dragonfly
       writer :dragonfly_url, :verify_urls, :url_format, :url_host, :url_path_prefix,
              :for => :server
       meth :before_serve, :for => :server
+      meth :after_serve, :for => :server
 
       def protect_from_dos_attacks(boolean)
         verify_urls(boolean)
