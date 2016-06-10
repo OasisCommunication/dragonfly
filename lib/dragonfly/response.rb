@@ -16,12 +16,18 @@ module Dragonfly
         elsif etag_matches?
           [304, cache_headers, []]
         else
-          job.apply
+          if job.file_content == nil
+            job.file_content = job.apply
+          else
+            job.file_content = [job.file_content]
+          end
+
           env['dragonfly.job'] = job
+          headers = job.headers ? job.headers : success_headers
           [
             200,
-            success_headers,
-            (request.head? ? [] : job)
+            headers,
+            (request.head? ? [] : job.file_content)
           ]
         end
       rescue Job::Fetch::NotFound => e

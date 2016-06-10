@@ -83,6 +83,8 @@ module Dragonfly
       @next_step_index = 0
       @steps = []
       @content = Content.new(app, content, meta)
+      @file_content = nil;
+      @headers = nil;
       @url_attributes = UrlAttributes.new
     end
 
@@ -238,6 +240,10 @@ module Dragonfly
     def inspect
       "<Dragonfly::Job app=#{app.name.inspect}, steps=#{steps.inspect}, content=#{content.inspect}, steps applied:#{applied_steps.length}/#{steps.length} >"
     end
+
+    attr_accessor :file_content, :headers
+
+
 
     protected
 

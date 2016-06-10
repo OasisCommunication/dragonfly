@@ -48,6 +48,10 @@ module Dragonfly
       self.before_serve_callback = block
     end
 
+    def after_serve(&block)
+      self.after_serve_callback = block
+    end
+
     def call(env)
       if dragonfly_url == env["PATH_INFO"]
         dragonfly_response
@@ -60,7 +64,12 @@ module Dragonfly
           if before_serve_callback && response.will_be_served?
             before_serve_callback.call(job, env)
           end
-          response.to_response
+          response = response.to_response
+          if after_serve_callback && response[0] == 200
+            after_serve_callback.call(job, response, env)
+          end
+
+          response
         end
       else
         [404, {'Content-Type' => 'text/plain', 'X-Cascade' => 'pass'}, ['Not found']]
@@ -92,7 +101,7 @@ module Dragonfly
     private
 
     attr_reader :app
-    attr_accessor :before_serve_callback, :url_mapper
+    attr_accessor :before_serve_callback, :after_serve_callback, :url_mapper
 
     def stringify_keys(params)
       params.inject({}) do |hash, (k, v)|
@@ -144,4 +153,3 @@ module Dragonfly
     end
   end
 end
-

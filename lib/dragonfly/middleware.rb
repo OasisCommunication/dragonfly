@@ -19,4 +19,3 @@ module Dragonfly
 
   end
 end
-
